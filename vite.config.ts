@@ -15,6 +15,8 @@ export default defineConfig({
         main: resolve(root, 'index.html'),
         mpa: resolve(root, 'mpa', 'index.html'),
         mpaCart: resolve(root, 'mpa', 'cart', 'index.html'),
+        bespoke: resolve(root, 'bespoke', 'index.html'),
+        brute: resolve(root, 'brute', 'index.html'),
       },
     },
   },

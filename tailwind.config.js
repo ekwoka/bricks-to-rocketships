@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 
 export default {
@@ -6,5 +7,5 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [typography],
+  plugins: [forms, typography],
 };
