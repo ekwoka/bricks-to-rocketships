@@ -13,6 +13,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(root, 'index.html'),
+        mpa: resolve(root, 'mpa', 'index.html'),
+        mpaCart: resolve(root, 'mpa', 'cart', 'index.html'),
       },
     },
   },
