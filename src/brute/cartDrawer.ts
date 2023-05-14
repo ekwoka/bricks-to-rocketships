@@ -24,8 +24,9 @@ const updateUI = () => {
   subtotal.textContent = `$${(cartState.total / 100).toFixed(2)}`;
 };
 
-export const addToCart = (item: CartItem) => {
-  cartState.items.push(item);
+let nextID = 1;
+export const addToCart = (item: Omit<CartItem, 'id'>) => {
+  cartState.items.push({ ...item, id: nextID++ });
   cartState.open = true;
   updateUI();
 };
@@ -47,41 +48,25 @@ const openCart = () => {
 const removeItem = (e: MouseEvent) => {
   const button = <HTMLButtonElement>e.currentTarget;
   const item = <HTMLLIElement>button.closest<HTMLLIElement>('li');
-  const price = <HTMLParagraphElement>(
-    item.querySelector<HTMLParagraphElement>('[data-price]')
-  );
-  updateCartTotal((-1 * Number(price.textContent?.replace('$', '')) * 100) | 0);
-
-  item?.remove();
+  const idx = item.id.match(/item-(\d+)/)?.[1];
+  if (!idx) return;
+  cartState.items.splice(Number(idx), 1);
+  updateUI();
 };
 
 const updateQty = (e: MouseEvent) => {
   const button = <HTMLButtonElement>e.currentTarget;
   const mod = button.matches('[data-add]') ? 1 : -1;
   const item = <HTMLLIElement>button.closest<HTMLLIElement>('li');
-  const qty = <HTMLParagraphElement>(
-    item.querySelector<HTMLParagraphElement>('[data-qty]')
-  );
-  const price = <HTMLParagraphElement>(
-    item.querySelector<HTMLParagraphElement>('[data-price]')
-  );
-  const newQty = Number(qty.textContent?.split(' ')[1]) + mod;
-  if (newQty < 1) return removeItem(e);
-  qty.textContent = `Qty ${newQty}`;
-  price.textContent = `$${(
-    (newQty * Number(price.dataset.price)) /
-    100
-  ).toFixed(2)}`;
-  updateCartTotal(mod * Number(price.dataset.price));
-};
-
-const updateCartTotal = (amount: number) => {
-  const current = (Number(subtotal.textContent?.replace('$', '')) * 100) | 0;
-  subtotal.textContent = `$${((current + amount) / 100).toFixed(2)}`;
+  const id = item.id.match(/item-(\d+)/)?.[1];
+  if (!id) return;
+  const itemState = cartState.items.find((item) => item.id === Number(id));
+  if (itemState) itemState.qty += mod;
+  updateUI();
 };
 
 const createCartNode = (item: CartItem): HTMLLIElement => {
-  const html = `<li class="flex py-6">
+  const html = `<li class="flex py-6" id="item-${item.id}">
                       <div
                         class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                         <img
@@ -98,7 +83,8 @@ const createCartNode = (item: CartItem): HTMLLIElement => {
                               <a href="#">${item.title}</a>
                             </h3>
                             <p class="ml-4" data-price="${item.price}">$${(
-    item.price / 100
+    (item.qty * item.price) /
+    100
   ).toFixed(2)}</p>
                           </div>
                           ${Object.entries(item.choices)
@@ -112,7 +98,9 @@ const createCartNode = (item: CartItem): HTMLLIElement => {
                           class="flex flex-1 items-end justify-between text-sm">
                           <div class="flex gap-2 items-center">
                             <button type="button" data-subtract class="bg-gray-200 py-1 px-2 rounded shadow">-</button>
-                            <p class="text-gray-500" data-qty>Qty 1</p>
+                            <p class="text-gray-500" data-qty>Qty ${
+                              item.qty
+                            }</p>
                             <button type="button" data-add class="bg-gray-200 py-1 px-2 rounded shadow">+</button>
                           </div>
                           <div class="flex">
@@ -146,6 +134,7 @@ get<HTMLButtonElement>('[data-close]').addEventListener('click', closeCart);
 drawer.addEventListener('click', (e) => e.stopPropagation());
 
 export type CartItem = {
+  id: number;
   title: string;
   price: number;
   qty: number;
