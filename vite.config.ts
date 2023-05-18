@@ -18,6 +18,7 @@ export default defineConfig({
         bespoke: resolve(root, 'bespoke', 'index.html'),
         brute: resolve(root, 'brute', 'index.html'),
         components: resolve(root, 'components', 'index.html'),
+        JSX: resolve(root, 'JSX', 'index.html'),
       },
     },
   },

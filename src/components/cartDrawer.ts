@@ -220,7 +220,7 @@ export class CartDrawer implements Component<CartState> {
       )
     );
   }
-  createCartNode = (item: CartItem): HTMLElement => {
+  createCartNode = (item: CartItem) => {
     return h(
       'li',
       {
