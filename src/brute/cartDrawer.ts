@@ -48,9 +48,10 @@ const openCart = () => {
 const removeItem = (e: MouseEvent) => {
   const button = <HTMLButtonElement>e.currentTarget;
   const item = <HTMLLIElement>button.closest<HTMLLIElement>('li');
-  const idx = item.id.match(/item-(\d+)/)?.[1];
-  if (!idx) return;
-  cartState.items.splice(Number(idx), 1);
+  const id = item.id.match(/item-(\d+)/)?.[1];
+  if (!id) return;
+  const itemState = cartState.items.findIndex((item) => item.id === Number(id));
+  if (itemState >= 0) cartState.items.splice(itemState, 1);
   updateUI();
 };
 
