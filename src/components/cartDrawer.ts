@@ -30,6 +30,7 @@ export class CartDrawer implements Component<CartState> {
         _;
       },
     };
+    this.render();
   }
   setState(newState: Partial<CartState> | ((old: CartState) => CartState)) {
     if (typeof newState === 'function') newState = newState(this.state);
@@ -66,16 +67,18 @@ export class CartDrawer implements Component<CartState> {
         {
           class: classNames(
             'fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500',
-            this.state.open ? 'opacity-100' : 'opacity-100 pointer-events-auto'
+            this.state.open ? 'opacity-100' : 'opacity-0 pointer-events-none'
           ),
+          onClick: () => this.setState({ open: false }),
         },
         h(
           'div',
           {
             class: classNames(
-              'fixed inset-y-0 right-0 flex max-w-full pl-10 transition-transform duration-700',
+              'fixed inset-y-0 right-0 flex max-w-full pl-10 transition-transform duration-700 pointer-events-auto',
               this.state.open ? 'translate-x-0' : 'translate-x-full'
             ),
+            onClick: (e: MouseEvent) => e.stopPropagation(),
           },
           h(
             'div',
