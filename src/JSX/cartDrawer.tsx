@@ -1,4 +1,5 @@
 /* @jsx h */
+import { CartFooter, CloseButton, QtyController } from './components';
 import { classNames, h } from './h';
 
 export const cartDrawer = {};
@@ -47,7 +48,7 @@ export class CartDrawer implements Component<CartState> {
   }
   removeItem(id: number) {
     const idx = this.state.items.findIndex((item) => item.id === Number(id));
-    if (!idx) return;
+    if (idx < 0) return;
     this.setState((old) => {
       old.items.splice(Number(idx), 1);
       return old;
@@ -56,7 +57,10 @@ export class CartDrawer implements Component<CartState> {
   updateQty = (id: number, count: number) => {
     this.setState((old) => {
       const itemState = old.items.find((item) => item.id === Number(id));
-      if (itemState) itemState.qty += count;
+      if (!itemState) return old;
+      itemState.qty += count;
+      if (itemState.qty <= 0)
+        old.items = old.items.filter((i) => i !== itemState);
       return old;
     });
   };
@@ -85,74 +89,31 @@ export class CartDrawer implements Component<CartState> {
                     Shopping cart
                   </h2>
                   <div class="ml-3 flex h-7 items-center">
-                    <button
-                      type="button"
-                      data-close
-                      class="-m-2 p-2 text-gray-400 hover:text-gray-500"
-                      onClick={() => this.setState({ open: false })}>
-                      <span class="sr-only">Close panel</span>
-                      <svg
-                        class="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        aria-hidden="true">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
+                    <CloseButton
+                      onClick={() => this.setState({ open: false })}
+                    />
                   </div>
                 </div>
 
                 <div class="mt-8">
                   <div class="flow-root">
                     <ul role="list" class="-my-6 divide-y divide-gray-200">
-                      {this.state.items.map((item) =>
-                        this.createCartNode(item)
-                      )}
+                      {this.state.items.map((item) => (
+                        <this.CreateCartNode {...item} />
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-                <div class="flex justify-between text-base font-medium text-gray-900">
-                  <p>Subtotal</p>
-                  <p data-subtotal>${(this.state.total / 100).toFixed(2)}</p>
-                </div>
-                <p class="mt-0.5 text-sm text-gray-500">
-                  Shipping and taxes calculated at checkout.
-                </p>
-                <div class="mt-6">
-                  <a
-                    href="#"
-                    class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
-                    Checkout
-                  </a>
-                </div>
-                <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
-                  <p>
-                    or
-                    <button
-                      type="button"
-                      class="font-medium text-indigo-600 hover:text-indigo-500">
-                      Continue Shopping
-                      <span aria-hidden="true"> &rarr;</span>
-                    </button>
-                  </p>
-                </div>
-              </div>
+              <CartFooter subtotal={this.state.total} />
             </div>
           </div>
         </div>
       </div>
     );
   }
-  createCartNode = (item: CartItem): HTMLElement => {
+  CreateCartNode = (item: CartItem): HTMLElement => {
     return (
       <li class="flex py-6" id="item-${item.id}">
         <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -180,25 +141,10 @@ export class CartDrawer implements Component<CartState> {
             ))}
           </div>
           <div class="flex flex-1 items-end justify-between text-sm">
-            <div class="flex gap-2 items-center">
-              <button
-                type="button"
-                data-subtract
-                class="bg-gray-200 py-1 px-2 rounded shadow"
-                onClick={() => this.updateQty(item.id, -1)}>
-                -
-              </button>
-              <p class="text-gray-500" data-qty>
-                {item.qty}
-              </p>
-              <button
-                type="button"
-                data-add
-                class="bg-gray-200 py-1 px-2 rounded shadow"
-                onClick={() => this.updateQty(item.id, 1)}>
-                +
-              </button>
-            </div>
+            <QtyController
+              qty={item.qty}
+              update={(v) => this.updateQty(item.id, v)}
+            />
             <div class="flex">
               <button
                 type="button"

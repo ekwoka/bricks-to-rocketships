@@ -46,7 +46,7 @@ export class CartDrawer implements Component<CartState> {
   }
   removeItem(id: number) {
     const idx = this.state.items.findIndex((item) => item.id === Number(id));
-    if (!idx) return;
+    if (idx < 0) return;
     this.setState((old) => {
       old.items.splice(Number(idx), 1);
       return old;

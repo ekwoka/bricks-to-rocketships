@@ -1,8 +1,11 @@
 export const h = (
-  tag: string,
-  props?: Record<string, unknown> | null,
+  tag: string | ((props: Record<string, unknown>) => Element),
+  props?: Record<string, unknown>,
   ...children: (Element | string | Element[])[]
 ) => {
+  if (typeof tag === 'function')
+    return tag(Object.assign(props ?? {}, { children }));
+
   const node = ['svg', 'path'].includes(tag)
     ? document.createElementNS('http://www.w3.org/2000/svg', tag)
     : document.createElement(tag);
@@ -20,6 +23,11 @@ export const h = (
       continue;
     }
     node.setAttribute(k, String(v));
+    if (k === 'disabled') {
+      node.setAttribute('aria-disabled', String(v));
+      if (!v) node.removeAttribute('disabled');
+      else node.setAttribute(k, k);
+    }
   }
   node.append(
     ...children
