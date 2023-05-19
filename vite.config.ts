@@ -19,6 +19,7 @@ export default defineConfig({
         brute: resolve(root, 'brute', 'index.html'),
         components: resolve(root, 'components', 'index.html'),
         JSX: resolve(root, 'JSX', 'index.html'),
+        VDOM: resolve(root, 'VDOM', 'index.html'),
       },
     },
   },
