@@ -113,7 +113,7 @@ export class CartDrawer implements Component<CartState> {
       </div>
     );
   }
-  CreateCartNode = (item: CartItem): HTMLElement => {
+  CreateCartNode = (item: CartItem) => {
     return (
       <li class="flex py-6" id="item-${item.id}">
         <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">

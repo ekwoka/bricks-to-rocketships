@@ -4,7 +4,6 @@ import { updateNode } from './updateNode';
 
 export const render = (root: HTMLElement, node: JSX.VNODE) => {
   const target = <HTMLElement | SVGElement>root.firstElementChild;
-  console.log(node);
   if (!target) return root.append(buildNode(node));
   recursiveRender(target, node);
 };
@@ -14,17 +13,10 @@ const recursiveRender = (
   node: JSX.VNODE
 ): HTMLElement | SVGElement => {
   const oldProps = NodeMap.get(target);
-  if (node.tag === 'ul') {
-    console.log('cart items');
-    console.log(node.children[0]);
-  }
   if (
     target.tagName.toLowerCase() !== node.tag ||
     !haveSameProps(oldProps, node.props)
   ) {
-    if (node.tag === 'ul') {
-      console.log('cart items building');
-    }
     const nextNode = buildNode(node);
     target.replaceWith(nextNode);
     return nextNode;
@@ -35,21 +27,18 @@ const recursiveRender = (
   let oldMarker = 0;
   let newMarker = 0;
   while (oldMarker < target.childNodes.length && newMarker < children.length) {
-    if (node.tag === 'ul') {
-      console.log('cart items updating');
-    }
     const oldChild = <HTMLElement | SVGElement>oldChildren[oldMarker];
     const newChild = children[newMarker];
-    if (typeof newChild !== 'object')
-      oldChild.replaceWith(document.createTextNode(newChild));
-    else recursiveRender(oldChild, newChild);
+    if (typeof newChild !== 'object') {
+      if (!(oldChild instanceof Text))
+        oldChild.replaceWith(document.createTextNode(newChild));
+      else if (oldChild.textContent !== newChild)
+        oldChild.textContent = newChild;
+    } else recursiveRender(oldChild, newChild);
     oldMarker++;
     newMarker++;
   }
   while (newMarker < children.length) {
-    if (node.tag === 'ul') {
-      console.log('cart items building');
-    }
     const newChild = children[newMarker++];
     if (typeof newChild !== 'object') document.createTextNode(newChild);
     else target.append(buildNode(newChild));
@@ -66,4 +55,8 @@ const haveSameProps = (a: JSX.VNODE['props'], b: JSX.VNODE['props']) => {
   if (aKeys.length !== bKeys.length) return false;
   if (new Set([...aKeys, ...bKeys]).size !== aKeys.length) return false;
   return true;
+};
+
+const _getSize = (thing: unknown) => {
+  return new TextEncoder().encode(JSON.stringify(thing)).byteLength;
 };

@@ -66,7 +66,7 @@ export class CartDrawer implements Component<CartState> {
     });
   };
 
-  render(): JSX.VNODE {
+  render() {
     return (
       <div
         class={classNames(
@@ -115,9 +115,9 @@ export class CartDrawer implements Component<CartState> {
       </div>
     );
   }
-  CreateCartNode = (item: CartItem): JSX.VNODE => {
+  CreateCartNode = (item: CartItem) => {
     return (
-      <li class="flex py-6" id="item-${item.id}">
+      <li class="flex py-6" id={`item-${item.id}`}>
         <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
           <img
             src={item.image}
