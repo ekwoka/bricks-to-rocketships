@@ -75,6 +75,7 @@ export class CartDrawer implements Component<CartState> {
         )}
         onClick={() => this.setState({ open: false })}>
         <div
+          id="cart-drawer"
           class={classNames(
             'fixed inset-y-0 right-0 flex max-w-full pl-10 transition-transform duration-700',
             this.state.open ? 'translate-x-0' : 'translate-x-full'

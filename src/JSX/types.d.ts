@@ -1,4 +1,4 @@
-/// <reference lib="DOM" />
+/* /// <reference lib="DOM" />
 
 declare namespace JSX {
   // The return type of our JSX Factory: this could be anything
@@ -19,3 +19,4 @@ declare namespace JSX {
     (properties?: { [key: string]: any }, children?: Node[]): Node;
   }
 }
+ */

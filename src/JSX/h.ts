@@ -15,11 +15,13 @@ export const h = (
       continue;
     }
     if (k === 'class') {
-      (<string>v).split(' ').forEach((c) => node.classList.add(c));
+      if (node instanceof SVGElement) node.setAttribute('class', <string>v);
+      else node.className = <string>v;
       continue;
     }
     if (k.startsWith('on')) {
-      node.addEventListener(k.slice(2).toLowerCase(), v as EventListener);
+      const event = k.slice(2).toLowerCase();
+      node.addEventListener(event, v as EventListener);
       continue;
     }
     node.setAttribute(k, String(v));

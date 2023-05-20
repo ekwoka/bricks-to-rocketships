@@ -55,7 +55,10 @@ export class CartDrawer implements Component<CartState> {
   updateQty = (id: number, count: number) => {
     this.setState((old) => {
       const itemState = old.items.find((item) => item.id === Number(id));
-      if (itemState) itemState.qty += count;
+      if (!itemState) return old;
+      itemState.qty += count;
+      if (itemState.qty <= 0)
+        old.items = old.items.filter((i) => i !== itemState);
       return old;
     });
   };

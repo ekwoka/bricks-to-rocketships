@@ -4,6 +4,7 @@ import { updateNode } from './updateNode';
 
 export const render = (root: HTMLElement, node: JSX.VNODE) => {
   const target = <HTMLElement | SVGElement>root.firstElementChild;
+  console.log(node);
   if (!target) return root.append(buildNode(node));
   recursiveRender(target, node);
 };
@@ -13,19 +14,47 @@ const recursiveRender = (
   node: JSX.VNODE
 ): HTMLElement | SVGElement => {
   const oldProps = NodeMap.get(target);
-  if (!haveSameProps(oldProps, node.props)) {
+  if (node.tag === 'ul') {
+    console.log('cart items');
+    console.log(node.children[0]);
+  }
+  if (
+    target.tagName.toLowerCase() !== node.tag ||
+    !haveSameProps(oldProps, node.props)
+  ) {
+    if (node.tag === 'ul') {
+      console.log('cart items building');
+    }
     const nextNode = buildNode(node);
     target.replaceWith(nextNode);
     return nextNode;
   }
   updateNode(target, node.props);
-  const children = (node.children ?? []).flat().map((child, i) => {
-    const oldChild = <HTMLElement | SVGElement>target.childNodes[i];
-    if (typeof child !== 'object') return document.createTextNode(child);
-    if (!oldChild) return buildNode(child);
-    return recursiveRender(oldChild, child);
-  });
-  target.replaceChildren?.(...children);
+  const oldChildren = [...target.childNodes];
+  const children = node.children.flat();
+  let oldMarker = 0;
+  let newMarker = 0;
+  while (oldMarker < target.childNodes.length && newMarker < children.length) {
+    if (node.tag === 'ul') {
+      console.log('cart items updating');
+    }
+    const oldChild = <HTMLElement | SVGElement>oldChildren[oldMarker];
+    const newChild = children[newMarker];
+    if (typeof newChild !== 'object')
+      oldChild.replaceWith(document.createTextNode(newChild));
+    else recursiveRender(oldChild, newChild);
+    oldMarker++;
+    newMarker++;
+  }
+  while (newMarker < children.length) {
+    if (node.tag === 'ul') {
+      console.log('cart items building');
+    }
+    const newChild = children[newMarker++];
+    if (typeof newChild !== 'object') document.createTextNode(newChild);
+    else target.append(buildNode(newChild));
+  }
+  while (oldMarker < oldChildren.length) oldChildren[oldMarker++]?.remove();
   return target;
 };
 
