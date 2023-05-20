@@ -1,4 +1,4 @@
-/* /// <reference lib="DOM" />
+/// <reference lib="DOM" />
 declare namespace JSX {
   // The return type of our JSX Factory: this could be anything
   type Element = VNODE;
@@ -6,7 +6,7 @@ declare namespace JSX {
   type VNODE = {
     tag: string;
     props?: Record<string, unknown>;
-    children: (VNODE | string | VNODE[])[];
+    children: (VNODE | string | (() => string) | Signal<string> | VNODE[])[];
   };
   // IntrinsicElementMap grabs all the standard HTML tags in the TS DOM lib.
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -22,4 +22,4 @@ declare namespace JSX {
   interface Component {
     (properties?: { [key: string]: any }, children?: Node[]): Node;
   }
-} */
+}

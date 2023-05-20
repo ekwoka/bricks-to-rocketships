@@ -1,6 +1,6 @@
 export const h = (
   tag: string | ((props: Record<string, unknown>) => Element),
-  props?: Record<string, unknown>,
+  props?: Record<string, unknown> | null,
   ...children: (Element | string | Element[])[]
 ) => {
   if (typeof tag === 'function')

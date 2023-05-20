@@ -20,6 +20,7 @@ export default defineConfig({
         components: resolve(root, 'components', 'index.html'),
         JSX: resolve(root, 'JSX', 'index.html'),
         VDOM: resolve(root, 'VDOM', 'index.html'),
+        'fine-grained': resolve(root, 'fine-grained', 'index.html'),
       },
     },
   },
